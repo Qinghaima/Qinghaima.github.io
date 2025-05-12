@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的第一个网页</title>
+    <style>
+        body {
+            font-family: '微软雅黑', sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .highlight {
+            color: #ff4d4d;
+            background-color: #fff0f0;
+            padding: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>欢迎来到<span class="highlight">我的小站</span>！</h1>
+    <p>这是我的第一个网页，我正在学习网页开发😊</p>
+    
+    <h2>近期计划</h2>
+    <ul>
+        <li>学习HTML基础</li>
+        <li>掌握CSS样式</li>
+        <li>尝试JavaScript交互</li>
+    </ul>
+
+    <button onclick="showMessage()">点我有惊喜</button>
+
+    <script>
+        function showMessage() {
+            alert('🎉 恭喜你迈出第一步！继续加油哦~');
+        }
+    </script>
+</body>
+</html>
