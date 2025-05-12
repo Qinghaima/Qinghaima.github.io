@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background: url('bg.webp') no-repeat center center fixed;
+  background: url('bg.png') no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -54,4 +54,78 @@ header {
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
+}
+.menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+  width: 120px;
+  z-index: 999;
+}
+
+.menu li {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.menu.hidden {
+  display: none;
+}
+
+.popup {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 180px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 15px;
+  z-index: 999;
+  transition: all 0.2s ease;
+}
+
+.popup h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.popup ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.popup li {
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+}
+
+.popup li:first-child {
+  border-top: none;
+}
+
+.popup a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+.popup a:hover {
+  color: #007acc;
+}
+
+.hidden {
+  display: none;
 }
