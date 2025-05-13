@@ -97,7 +97,7 @@
     firebase.auth().onAuthStateChanged(user => {
       const popup = document.getElementById('popup-card');
       if (user) {
-        const displayName = user.displayName || '未设置';
+        const displayName = user.displayName || 'this_is_a_very_long_username_for_test';
         popup.innerHTML = `
           <p style="font-weight:bold;" title="${user.email}">${user.email}</p>
           <p title="${displayName}">用户名：<span data-fulltext="${displayName}">${displayName}</span></p>
