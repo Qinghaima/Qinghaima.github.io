@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>绯÷病历本</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="assets/firebase-init.js"></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>导航</h2>
+      <nav>
+        <a href="index.html">🏠 首页</a>
+        <a href="about.html">📖 关于</a>
+        <a href="gengbaike.html">📝 绯绯国梗百科</a>
+        <a href="bingliben.html">🩺 绯÷病历本</a>
+        <a href="paiwei.html">🎮 排位记录</a>
+        <a href="mud.html">🥰 泥巴怪可爱喵</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header>
+        <div class="avatar" onclick="togglePopup()">
+          <img src="assets/avatar.png" alt="用户头像" />
+          <div id="popup-card" class="popup hidden"></div>
+        </div>
+      </header>
+      <section>
+        <h1>这里是“排位记录”</h1>
+        <p>还没想好写什么内容。</p>
+      </section>
+    </main>
+  </div>
+  <script src="assets/user-popup.js"></script>
+</body>
+</html>
