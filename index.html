@@ -27,19 +27,7 @@
         <div class="avatar" onclick="togglePopup()">
           <img src="assets/avatar.png" alt="用户头像" />
           <div id="popup-card" class="popup hidden">
-            <div id="user-info">
-              <p id="user-email"></p>
-              <p id="user-name"></p>
-            </div>
-            <ul id="auth-links">
-              <li><a href="login.html">登录</a></li>
-              <li><a href="register.html">注册</a></li>
-            </ul>
-            <ul id="user-links" class="hidden">
-              <li><a href="#">个人主页</a></li>
-              <li><a href="#">通知</a></li>
-              <li><a href="#" onclick="logoutUser()">退出</a></li>
-            </ul>
+            <!-- 登录状态展示内容通过 JS 动态填充 -->
           </div>
         </div>
       </header>
@@ -73,21 +61,24 @@
     }
 
     firebase.auth().onAuthStateChanged(user => {
-      const userLinks = document.getElementById("user-links");
-      const authLinks = document.getElementById("auth-links");
-      const emailField = document.getElementById("user-email");
-      const nameField = document.getElementById("user-name");
-
+      const popup = document.getElementById('popup-card');
       if (user) {
-        authLinks.classList.add("hidden");
-        userLinks.classList.remove("hidden");
-        emailField.innerText = user.email;
-        nameField.innerText = `用户名：${user.displayName || '未设置'}`;
+        popup.innerHTML = `
+          <p><strong>${user.email}</strong></p>
+          <p>用户名：${user.displayName || '未设置'}</p>
+          <hr>
+          <a href="#">个人主页</a><br>
+          <a href="#">通知</a><br>
+          <a href="#" onclick="logoutUser()">退出</a>
+        `;
       } else {
-        authLinks.classList.remove("hidden");
-        userLinks.classList.add("hidden");
-        emailField.innerText = "";
-        nameField.innerText = "";
+        popup.innerHTML = `
+          <h3>欢迎使用！</h3>
+          <ul>
+            <li><a href="login.html">登录</a></li>
+            <li><a href="register.html">注册</a></li>
+          </ul>
+        `;
       }
     });
   </script>
