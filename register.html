@@ -7,12 +7,11 @@
   <title>注册</title>
   <link rel="stylesheet" href="assets/style.css" />
 
-  <!-- ✅ 正确加载 Firebase SDK 模块 -->
+<!-- ✅ 替换你 register.html 的 <head> 中原来的 3 行为下面这 3 行 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+<script src="assets/firebase-init.js"></script>
 
-  <!-- ✅ 引入你自己的 firebase-init.js（不能含 script 标签） -->
-  <script src="assets/firebase-init.js"></script>
 </head>
 <body>
   <div class="register-box">
