@@ -98,7 +98,7 @@
     firebase.auth().onAuthStateChanged(user => {
       const popup = document.getElementById('popup-card');
       if (user) {
-        const displayName = user.displayName || '未设置';
+        const displayName = user.displayName || 'this_is_a_very_long_username_for_test';
         const email = user.email;
         const truncatedEmail = email.length > 20 ? email.slice(0, 10) + '...' + email.slice(-7) : email;
         const truncatedName = displayName.length > 16 ? displayName.slice(0, 8) + '...' + displayName.slice(-4) : displayName;
