@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>绯燐Rinka的绯物之家</title>
   <link rel="stylesheet" href="assets/style.css" />
+
+  <!-- ✅ 引入 Firebase SDK 和初始化配置 -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="assets/firebase-init.js"></script>
 </head>
 
-
-
 <body>
-  <!-- 背景图可更换：本地放 bg.jpg，或改为远程链接 -->
   <div class="container">
     <aside class="sidebar">
       <h2>导航</h2>
@@ -23,20 +25,19 @@
     </aside>
 
     <main class="content">
-<header>
-  <div class="avatar" onclick="togglePopup()">
-    <img src="assets/avatar.png" alt="用户头像" />
-    <div id="popup-card" class="popup hidden">
-      <h3>欢迎使用！</h3>
-      <ul>
-        <li><a href="login.html">登录</a></li>
-        <li><a href="register.html">注册</a></li>
-        <li><a href="#">退出</a></li>
-      </ul>
-    </div>
-  </div>
-</header>
-
+      <header>
+        <div class="avatar" onclick="togglePopup()">
+          <img src="assets/avatar.png" alt="用户头像" />
+          <div id="popup-card" class="popup hidden">
+            <h3 id="user-email">欢迎使用！</h3> <!-- 🔺显示邮箱 -->
+            <ul>
+              <li><a href="login.html">登录</a></li>
+              <li><a href="register.html">注册</a></li>
+              <li><a href="#" onclick="logout()">退出</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
 
       <section>
         <h1>欢迎来到<span class="highlight">绯燐Rinka的绯物之家</span>！</h1>
@@ -47,20 +48,40 @@
   </div>
 
   <script>
-  function togglePopup() {
-    const popup = document.getElementById('popup-card');
-    popup.classList.toggle('hidden');
-  }
-
-  // 点击页面其他地方关闭
-  document.addEventListener('click', function (event) {
-    const avatar = document.querySelector('.avatar');
-    const popup = document.getElementById('popup-card');
-    if (!avatar.contains(event.target)) {
-      popup.classList.add('hidden');
+    // 显示头像弹出框
+    function togglePopup() {
+      const popup = document.getElementById('popup-card');
+      popup.classList.toggle('hidden');
     }
-  });
-</script>
 
+    // 点击其他地方关闭
+    document.addEventListener('click', function (event) {
+      const avatar = document.querySelector('.avatar');
+      const popup = document.getElementById('popup-card');
+      if (!avatar.contains(event.target)) {
+        popup.classList.add('hidden');
+      }
+    });
+
+    // ✅ 显示当前登录用户邮箱
+    firebase.auth().onAuthStateChanged(function (user) {
+      const userEmail = document.getElementById("user-email");
+      if (user) {
+        userEmail.innerText = user.email;
+      } else {
+        userEmail.innerText = "未登录";
+      }
+    });
+
+    // ✅ 实现登出功能
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        alert("已退出登录");
+        location.reload(); // 刷新页面更新状态
+      }).catch((error) => {
+        alert("登出失败：" + error.message);
+      });
+    }
+  </script>
 </body>
 </html>
