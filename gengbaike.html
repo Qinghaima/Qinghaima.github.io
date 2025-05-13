@@ -6,26 +6,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>绯燐Rinka的绯物之家</title>
   <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="assets/firebase-init.js"></script>
+  <style>
+    #popup-card {
+      width: 220px;
+      word-break: break-word;
+    }
+    #popup-card p {
+      margin: 5px 0;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    #popup-card p span {
+      display: inline-block;
+      vertical-align: bottom;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+    }
+    #popup-card p span:hover::after {
+      content: attr(data-fulltext);
+      position: absolute;
+      background: #fff;
+      color: #000;
+      padding: 5px;
+      border: 1px solid #ccc;
+      z-index: 1000;
+      white-space: normal;
+      max-width: 300px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 
-<script>
-  function toggleMenu() {
-    const menu = document.getElementById('user-menu');
-    menu.classList.toggle('hidden');
-  }
-
-  // 点击页面其他地方时关闭菜单
-  document.addEventListener('click', function (event) {
-    const avatar = document.querySelector('.avatar');
-    const menu = document.getElementById('user-menu');
-    if (!avatar.contains(event.target)) {
-      menu.classList.add('hidden');
-    }
-  });
-</script>
-
 <body>
-  <!-- 背景图可更换：本地放 bg.jpg，或改为远程链接 -->
   <div class="container">
     <aside class="sidebar">
       <h2>导航</h2>
@@ -37,44 +58,71 @@
     </aside>
 
     <main class="content">
-<header>
-  <div class="avatar" onclick="togglePopup()">
-    <img src="assets/avatar.png" alt="用户头像" />
-    <div id="popup-card" class="popup hidden">
-      <h3>欢迎使用！</h3>
-      <ul>
-        <li><a href="login.html">登录</a></li>
-        <li><a href="register.html">注册</a></li>
-        <li><a href="#">退出</a></li>
-      </ul>
-    </div>
-  </div>
-</header>
-
+      <header>
+        <div class="avatar" onclick="togglePopup()">
+          <img src="assets/avatar.png" alt="用户头像" />
+          <div id="popup-card" class="popup hidden">
+            <!-- 登录状态展示内容通过 JS 动态填充 -->
+          </div>
+        </div>
+      </header>
 
       <section>
+        <h1>欢迎来到<span class="highlight">绯燐Rinka的绯物之家</span>！</h1>
         <h1>绯绯国梗百科</h1>
         <p>绯绯国梗百科，留着以后把史搬上来。</p>
-
       </section>
     </main>
   </div>
 
   <script>
-  function togglePopup() {
-    const popup = document.getElementById('popup-card');
-    popup.classList.toggle('hidden');
-  }
-
-  // 点击页面其他地方关闭
-  document.addEventListener('click', function (event) {
-    const avatar = document.querySelector('.avatar');
-    const popup = document.getElementById('popup-card');
-    if (!avatar.contains(event.target)) {
-      popup.classList.add('hidden');
+    function togglePopup() {
+      const popup = document.getElementById('popup-card');
+      popup.classList.toggle('hidden');
     }
-  });
-</script>
 
+    document.addEventListener('click', function (event) {
+      const avatar = document.querySelector('.avatar');
+      const popup = document.getElementById('popup-card');
+      if (!avatar.contains(event.target)) {
+        popup.classList.add('hidden');
+      }
+    });
+
+    function logoutUser() {
+      firebase.auth().signOut().then(() => {
+        location.reload();
+      });
+    }
+
+    firebase.auth().onAuthStateChanged(user => {
+      const popup = document.getElementById('popup-card');
+      if (user) {
+        const displayName = user.displayName || '未设置';
+        const email = user.email;
+        const truncatedEmail = email.length > 20 ? email.slice(0, 10) + '...' + email.slice(-7) : email;
+        const truncatedName = displayName.length > 16 ? displayName.slice(0, 8) + '...' + displayName.slice(-4) : displayName;
+
+        popup.innerHTML = `
+          <p style="font-weight:bold;" title="${email}">
+            <span data-fulltext="${email}">${truncatedEmail}</span>
+          </p>
+          <p title="${displayName}">用户名：<span data-fulltext="${displayName}">${truncatedName}</span></p>
+          <hr>
+          <a href="#">个人主页</a><br>
+          <a href="#">通知</a><br>
+          <a href="#" onclick="logoutUser()">退出</a>
+        `;
+      } else {
+        popup.innerHTML = `
+          <h3>欢迎使用！</h3>
+          <ul>
+            <li><a href="login.html">登录</a></li>
+            <li><a href="register.html">注册</a></li>
+          </ul>
+        `;
+      }
+    });
+  </script>
 </body>
 </html>
