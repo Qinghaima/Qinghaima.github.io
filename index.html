@@ -13,25 +13,21 @@
     #popup-card {
       width: 220px;
       word-break: break-word;
+      position: relative;
     }
     #popup-card p {
       margin: 5px 0;
       font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
     }
-    #popup-card p span {
-      display: inline-block;
-      vertical-align: bottom;
-      max-width: 100%;
+    .truncated {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      max-width: 100%;
+      display: inline-block;
       position: relative;
     }
-    #popup-card p span:hover::after {
+    .truncated:hover::after {
       content: attr(data-fulltext);
       position: absolute;
       background: #fff;
@@ -41,6 +37,8 @@
       z-index: 1000;
       white-space: normal;
       max-width: 300px;
+      top: 100%;
+      left: 0;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
   </style>
@@ -61,9 +59,7 @@
       <header>
         <div class="avatar" onclick="togglePopup()">
           <img src="assets/avatar.png" alt="用户头像" />
-          <div id="popup-card" class="popup hidden">
-            <!-- 登录状态展示内容通过 JS 动态填充 -->
-          </div>
+          <div id="popup-card" class="popup hidden"></div>
         </div>
       </header>
 
@@ -95,19 +91,24 @@
       });
     }
 
+    function truncateMiddle(text, length = 20) {
+      if (text.length <= length) return text;
+      const front = Math.ceil(length / 2) - 1;
+      const back = Math.floor(length / 2) - 1;
+      return text.slice(0, front) + '...' + text.slice(-back);
+    }
+
     firebase.auth().onAuthStateChanged(user => {
       const popup = document.getElementById('popup-card');
       if (user) {
-        const displayName = user.displayName || 'this_is_a_very_long_username_for_test';
+        const displayName = user.displayName || '未设置';
         const email = user.email;
-        const truncatedEmail = email.length > 20 ? email.slice(0, 10) + '...' + email.slice(-7) : email;
-        const truncatedName = displayName.length > 16 ? displayName.slice(0, 8) + '...' + displayName.slice(-4) : displayName;
+        const showEmail = email.length > 20 ? truncateMiddle(email, 24) : email;
+        const showName = displayName.length > 16 ? truncateMiddle(displayName, 16) : displayName;
 
         popup.innerHTML = `
-          <p style="font-weight:bold;" title="${email}">
-            <span data-fulltext="${email}">${truncatedEmail}</span>
-          </p>
-          <p title="${displayName}">用户名：<span data-fulltext="${displayName}">${truncatedName}</span></p>
+          <p><span class="truncated" data-fulltext="${email}">${showEmail}</span></p>
+          <p>用户名：<span class="truncated" data-fulltext="${displayName}">${showName}</span></p>
           <hr>
           <a href="#">个人主页</a><br>
           <a href="#">通知</a><br>
