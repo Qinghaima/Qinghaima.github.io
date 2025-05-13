@@ -9,6 +9,16 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
   <script src="assets/firebase-init.js"></script>
+  <style>
+    #popup-card {
+      width: 220px;
+      word-break: break-word;
+    }
+    #popup-card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
@@ -64,8 +74,8 @@
       const popup = document.getElementById('popup-card');
       if (user) {
         popup.innerHTML = `
-          <p><strong>${user.email}</strong></p>
-          <p>用户名：${user.displayName || '未设置'}</p>
+          <p style="font-weight:bold;">${user.email}</p>
+          <p>用户名：<span style="word-break: break-all;">${user.displayName || '未设置'}</span></p>
           <hr>
           <a href="#">个人主页</a><br>
           <a href="#">通知</a><br>
