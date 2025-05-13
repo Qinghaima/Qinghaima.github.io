@@ -13,18 +13,35 @@
     #popup-card {
       width: 220px;
       word-break: break-word;
-      position: relative;
     }
     #popup-card p {
       margin: 5px 0;
       font-size: 14px;
-    }
-    .truncated {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
+    }
+    #popup-card p span {
       display: inline-block;
+      vertical-align: bottom;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+    }
+    #popup-card p span:hover::after {
+      content: attr(data-fulltext);
+      position: absolute;
+      background: #fff;
+      color: #000;
+      padding: 5px;
+      border: 1px solid #ccc;
+      z-index: 1000;
+      white-space: normal;
+      max-width: 300px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -44,7 +61,9 @@
       <header>
         <div class="avatar" onclick="togglePopup()">
           <img src="assets/avatar.png" alt="用户头像" />
-          <div id="popup-card" class="popup hidden"></div>
+          <div id="popup-card" class="popup hidden">
+            <!-- 登录状态展示内容通过 JS 动态填充 -->
+          </div>
         </div>
       </header>
 
@@ -81,10 +100,14 @@
       if (user) {
         const displayName = user.displayName || '未设置';
         const email = user.email;
+        const truncatedEmail = email.length > 20 ? email.slice(0, 10) + '...' + email.slice(-7) : email;
+        const truncatedName = displayName.length > 16 ? displayName.slice(0, 8) + '...' + displayName.slice(-4) : displayName;
 
         popup.innerHTML = `
-          <p class="truncated" title="${email}">${email}</p>
-          <p class="truncated" title="${displayName}">用户名：${displayName}</p>
+          <p style="font-weight:bold;" title="${email}">
+            <span data-fulltext="${email}">${truncatedEmail}</span>
+          </p>
+          <p title="${displayName}">用户名：<span data-fulltext="${displayName}">${truncatedName}</span></p>
           <hr>
           <a href="#">个人主页</a><br>
           <a href="#">通知</a><br>
