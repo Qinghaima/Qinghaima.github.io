@@ -1,3 +1,4 @@
+<!-- register.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -5,70 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>注册</title>
   <link rel="stylesheet" href="assets/style.css" />
-  <style>
-    .register-box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 340px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .register-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-
-    .register-box input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .register-box button {
-      width: 100%;
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .register-box button:hover {
-      background-color: #218838;
-    }
-
-    .register-box .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 15px;
-      text-decoration: none;
-      color: #333;
-    }
-
-    .register-box .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <script src="assets/firebase-init.js"></script>
 </head>
 <body>
   <div class="register-box">
     <h2>注册</h2>
-    <input type="text" placeholder="用户名" />
-    <input type="email" placeholder="邮箱" />
-    <input type="password" placeholder="密码" />
-    <button>注册</button>
+    <input type="email" id="register-email" placeholder="邮箱" />
+    <input type="password" id="register-password" placeholder="密码" />
+    <button onclick="registerUser()">注册</button>
     <a href="index.html" class="back-link">← 返回首页</a>
+    <p id="register-error" style="color:red;"></p>
   </div>
+
+  <script>
+    function registerUser() {
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          alert("注册成功，自动登录中...");
+          window.location.href = "index.html";
+        })
+        .catch((error) => {
+          document.getElementById("register-error").innerText = error.message;
+        });
+    }
+  </script>
 </body>
 </html>

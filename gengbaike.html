@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +8,24 @@
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('user-menu');
+    menu.classList.toggle('hidden');
+  }
+
+  // 点击页面其他地方时关闭菜单
+  document.addEventListener('click', function (event) {
+    const avatar = document.querySelector('.avatar');
+    const menu = document.getElementById('user-menu');
+    if (!avatar.contains(event.target)) {
+      menu.classList.add('hidden');
+    }
+  });
+</script>
+
 <body>
+  <!-- 背景图可更换：本地放 bg.jpg，或改为远程链接 -->
   <div class="container">
     <aside class="sidebar">
       <h2>导航</h2>
@@ -19,19 +37,20 @@
     </aside>
 
     <main class="content">
-      <header>
-        <div class="avatar" onclick="togglePopup()">
-          <img src="assets/avatar.png" alt="用户头像" />
-          <div id="popup-card" class="popup hidden">
-            <h3>欢迎使用！</h3>
-            <ul>
-              <li><a href="login.html">登录</a></li>
-              <li><a href="register.html">注册</a></li>
-              <li><a href="#">退出</a></li>
-            </ul>
-          </div>
-        </div>
-      </header>
+<header>
+  <div class="avatar" onclick="togglePopup()">
+    <img src="assets/avatar.png" alt="用户头像" />
+    <div id="popup-card" class="popup hidden">
+      <h3>欢迎使用！</h3>
+      <ul>
+        <li><a href="login.html">登录</a></li>
+        <li><a href="register.html">注册</a></li>
+        <li><a href="#">退出</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
 
       <section>
         <h1>绯绯国梗百科</h1>
@@ -41,20 +60,21 @@
     </main>
   </div>
 
-  <!-- ✅ 只保留一个控制头像弹窗的 JS -->
   <script>
-    function togglePopup() {
-      const popup = document.getElementById('popup-card');
-      popup.classList.toggle('hidden');
-    }
+  function togglePopup() {
+    const popup = document.getElementById('popup-card');
+    popup.classList.toggle('hidden');
+  }
 
-    document.addEventListener('click', function (event) {
-      const avatar = document.querySelector('.avatar');
-      const popup = document.getElementById('popup-card');
-      if (!avatar.contains(event.target)) {
-        popup.classList.add('hidden');
-      }
-    });
-  </script>
+  // 点击页面其他地方关闭
+  document.addEventListener('click', function (event) {
+    const avatar = document.querySelector('.avatar');
+    const popup = document.getElementById('popup-card');
+    if (!avatar.contains(event.target)) {
+      popup.classList.add('hidden');
+    }
+  });
+</script>
+
 </body>
 </html>
