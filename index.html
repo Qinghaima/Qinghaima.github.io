@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>绯燐Rinka的绯物之家</title>
   <link rel="stylesheet" href="assets/style.css" />
-
-  <!-- ✅ 引入 Firebase SDK 和初始化配置 -->
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
   <script src="assets/firebase-init.js"></script>
@@ -29,25 +27,19 @@
         <div class="avatar" onclick="togglePopup()">
           <img src="assets/avatar.png" alt="用户头像" />
           <div id="popup-card" class="popup hidden">
-            <!-- 登录前 -->
-            <div id="guest-menu">
-              <h3>欢迎使用！</h3>
-              <ul>
-                <li><a href="login.html">登录</a></li>
-                <li><a href="register.html">注册</a></li>
-              </ul>
+            <div id="user-info">
+              <p id="user-email"></p>
+              <p id="user-name"></p>
             </div>
-
-            <!-- 登录后 -->
-            <div id="user-menu" class="hidden">
-              <h3 id="user-email">已登录</h3>
-              <ul>
-                <li><a href="#" id="user-name">用户名</a></li>
-                <li><a href="#">个人主页</a></li>
-                <li><a href="#">通知</a></li>
-                <li><a href="#" onclick="logout()">退出</a></li>
-              </ul>
-            </div>
+            <ul id="auth-links">
+              <li><a href="login.html">登录</a></li>
+              <li><a href="register.html">注册</a></li>
+            </ul>
+            <ul id="user-links" class="hidden">
+              <li><a href="#">个人主页</a></li>
+              <li><a href="#">通知</a></li>
+              <li><a href="#" onclick="logoutUser()">退出</a></li>
+            </ul>
           </div>
         </div>
       </header>
@@ -74,30 +66,30 @@
       }
     });
 
-    firebase.auth().onAuthStateChanged(function (user) {
-      const guestMenu = document.getElementById("guest-menu");
-      const userMenu = document.getElementById("user-menu");
-      const userEmail = document.getElementById("user-email");
-      const userName = document.getElementById("user-name");
-      if (user) {
-        guestMenu.classList.add("hidden");
-        userMenu.classList.remove("hidden");
-        userEmail.innerText = user.email;
-        userName.innerText = "B站ID：" + user.email.split("@")[0];
-      } else {
-        guestMenu.classList.remove("hidden");
-        userMenu.classList.add("hidden");
-      }
-    });
-
-    function logout() {
+    function logoutUser() {
       firebase.auth().signOut().then(() => {
-        alert("已退出登录");
         location.reload();
-      }).catch((error) => {
-        alert("登出失败：" + error.message);
       });
     }
+
+    firebase.auth().onAuthStateChanged(user => {
+      const userLinks = document.getElementById("user-links");
+      const authLinks = document.getElementById("auth-links");
+      const emailField = document.getElementById("user-email");
+      const nameField = document.getElementById("user-name");
+
+      if (user) {
+        authLinks.classList.add("hidden");
+        userLinks.classList.remove("hidden");
+        emailField.innerText = user.email;
+        nameField.innerText = `用户名（B站ID）：${user.displayName || '未设置'}`;
+      } else {
+        authLinks.classList.remove("hidden");
+        userLinks.classList.add("hidden");
+        emailField.innerText = "";
+        nameField.innerText = "";
+      }
+    });
   </script>
 </body>
 </html>
