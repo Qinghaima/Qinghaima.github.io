@@ -10,6 +10,8 @@
   <!-- ✅ Firebase 浏览器兼容版本 -->
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <!-- ✅ 添加你的初始化脚本 -->
+  <script src="assets/firebase-init.js"></script>
 </head>
 <body>
   <div class="register-box">
@@ -22,17 +24,6 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBC262GHqTJxk61mLAB6sIH9KFD6NfMtLQ",
-      authDomain: "rinka-site-5a986.firebaseapp.com",
-      projectId: "rinka-site-5a986",
-      storageBucket: "rinka-site-5a986.appspot.com",
-      messagingSenderId: "85571120840",
-      appId: "1:85571120840:web:0d7602aefb667f814f3ffd",
-      measurementId: "G-C81RQBJECD"
-    };
-    firebase.initializeApp(firebaseConfig);
-
     function loginUser() {
       const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
