@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,64 +9,27 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
   <script src="assets/firebase-init.js"></script>
-  <style>
-    #popup-card {
-      width: 220px;
-      word-break: break-word;
-    }
-    #popup-card p {
-      margin: 5px 0;
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
-    #popup-card p span {
-      display: inline-block;
-      vertical-align: bottom;
-      max-width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
-    }
-    #popup-card p span:hover::after {
-      content: attr(data-fulltext);
-      position: absolute;
-      background: #fff;
-      color: #000;
-      padding: 5px;
-      border: 1px solid #ccc;
-      z-index: 1000;
-      white-space: normal;
-      max-width: 300px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-  </style>
 </head>
 
 <body>
   <div class="container">
- <aside class="sidebar">
-  <h2>导航</h2>
-  <nav>
-    <a href="index.html">🏠 首页</a>
-    <a href="about.html">📖 关于</a>
-    <a href="gengbaike.html">📝 绯绯国梗百科</a>
-    <a href="bingliben.html">🩺 绯÷病历本</a>
-    <a href="paiwei.html">🎮 排位记录</a>
-    <a href="mud.html">🥰 泥巴怪可爱喵</a>
-  </nav>
-</aside>
+    <aside class="sidebar">
+      <h2>导航</h2>
+      <nav>
+        <a href="index.html">🏠 首页</a>
+        <a href="about.html">📖 关于</a>
+        <a href="gengbaike.html">📝 绯绯国梗百科</a>
+        <a href="bingliben.html">🩺 绯÷病历本</a>
+        <a href="paiwei.html">🎮 排位记录</a>
+        <a href="mud.html">🥰 泥巴怪可爱喵</a>
+      </nav>
+    </aside>
 
     <main class="content">
       <header>
         <div class="avatar" onclick="togglePopup()">
           <img src="assets/avatar.png" alt="用户头像" />
-          <div id="popup-card" class="popup hidden">
-            <!-- 登录信息将在 JS 中动态填充 -->
-          </div>
+          <div id="popup-card" class="popup hidden"></div>
         </div>
       </header>
 
@@ -76,54 +40,7 @@
     </main>
   </div>
 
-  <script>
-    function togglePopup() {
-      const popup = document.getElementById('popup-card');
-      popup.classList.toggle('hidden');
-    }
-
-    document.addEventListener('click', function (event) {
-      const avatar = document.querySelector('.avatar');
-      const popup = document.getElementById('popup-card');
-      if (!avatar.contains(event.target)) {
-        popup.classList.add('hidden');
-      }
-    });
-
-    function logoutUser() {
-      firebase.auth().signOut().then(() => {
-        location.reload();
-      });
-    }
-
-    firebase.auth().onAuthStateChanged(user => {
-      const popup = document.getElementById('popup-card');
-      if (user) {
-        const displayName = user.displayName || '未设置';
-        const email = user.email;
-        const truncatedEmail = email.length > 20 ? email.slice(0, 10) + '...' + email.slice(-7) : email;
-        const truncatedName = displayName.length > 16 ? displayName.slice(0, 8) + '...' + displayName.slice(-4) : displayName;
-
-        popup.innerHTML = `
-          <p style="font-weight:bold;" title="${email}">
-            <span data-fulltext="${email}">${truncatedEmail}</span>
-          </p>
-          <p title="${displayName}">用户名：<span data-fulltext="${displayName}">${truncatedName}</span></p>
-          <hr>
-          <a href="#">个人主页</a><br>
-          <a href="#">通知</a><br>
-          <a href="#" onclick="logoutUser()">退出</a>
-        `;
-      } else {
-        popup.innerHTML = `
-          <h3>欢迎使用！</h3>
-          <ul>
-            <li><a href="login.html">登录</a></li>
-            <li><a href="register.html">注册</a></li>
-          </ul>
-        `;
-      }
-    });
-  </script>
+  <!-- ✅ 统一的用户弹窗逻辑 -->
+  <script src="assets/user-popup.js"></script>
 </body>
 </html>
