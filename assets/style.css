@@ -129,3 +129,17 @@ header {
 .hidden {
   display: none;
 }
+.popup-line {
+  font-size: 14px;
+  margin: 4px 0;
+  white-space: nowrap;
+}
+
+.ellipsis-container {
+  display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
