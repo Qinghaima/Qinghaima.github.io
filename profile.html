@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>个人主页</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
+  <script src="assets/firebase-init.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #fff0f7; padding: 2em; }
+    .profile-box {
+      background: white;
+      border: 2px solid #f3c1e1;
+      border-radius: 16px;
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+    .avatar-preview {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid #f3c1e1;
+      margin-bottom: 10px;
+    }
+    .avatar-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #d24492;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #aa2d6f;
+    }
+    .notice {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .msg-success {
+      color: green;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-box">
+    <h2>个人主页设置</h2>
+    <div class="avatar-preview">
+      <img id="avatar-img" src="assets/avatar.png" alt="头像" />
+    </div>
+    <input type="file" id="avatar-upload" accept="image/*" />
+    <div class="notice">头像必须为正方形，文件大小不得超过 1MB</div>
+    <button onclick="uploadAvatar()">设为头像</button>
+    <p class="msg-success" id="avatar-success">头像设置成功！</p>
+
+    <h3>用户名</h3>
+    <input type="text" id="username" placeholder="起个名字吧～" />
+
+    <h3>个性签名</h3>
+    <textarea id="signature" rows="3" placeholder="写一点简介..."></textarea>
+
+    <button onclick="saveProfile()">保存设置</button>
+    <p class="msg-success" id="profile-success">资料保存成功！</p>
+  </div>
+
+  <script>
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+    const db = firebase.firestore();
+    let selectedFile = null;
+
+    document.getElementById("avatar-upload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 1024 * 1024) return alert("图片大小必须小于1MB");
+      const img = new Image();
+      img.onload = () => {
+        if (img.width !== img.height) {
+          alert("请上传正方形图片！");
+          return;
+        }
+        selectedFile = file;
+        document.getElementById("avatar-img").src = URL.createObjectURL(file);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    function uploadAvatar() {
+      const user = auth.currentUser;
+      if (!user || !selectedFile) return alert("请先登录并选择合格的图片");
+
+      const ref = storage.ref(`avatars/${user.uid}.jpg`);
+      ref.put(selectedFile).then(() => {
+        ref.getDownloadURL().then(url => {
+          user.updateProfile({ photoURL: url });
+          db.collection("profiles").doc(user.uid).set({ avatar: url }, { merge: true });
+          document.getElementById("avatar-success").style.display = "block";
+          setTimeout(() => location.reload(), 1500);
+        });
+      });
+    }
+
+    function saveProfile() {
+      const user = auth.currentUser;
+      if (!user) return alert("请先登录");
+
+      const name = document.getElementById("username").value;
+      const sig = document.getElementById("signature").value;
+
+      user.updateProfile({ displayName: name });
+      db.collection("profiles").doc(user.uid).set({
+        displayName: name,
+        signature: sig
+      }, { merge: true }).then(() => {
+        document.getElementById("profile-success").style.display = "block";
+      });
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("username").value = user.displayName || "";
+        if (user.photoURL) {
+          document.getElementById("avatar-img").src = user.photoURL;
+        }
+        db.collection("profiles").doc(user.uid).get().then(doc => {
+          if (doc.exists) {
+            document.getElementById("signature").value = doc.data().signature || "";
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
