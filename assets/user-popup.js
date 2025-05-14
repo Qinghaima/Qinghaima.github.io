@@ -6,7 +6,7 @@ function togglePopup() {
   popup.classList.toggle('hidden');
 }
 
-// 点击页面其他区域关闭弹窗（不拦截链接点击）
+// 点击页面其他区域关闭弹窗
 document.addEventListener('click', function (event) {
   const avatar = document.querySelector('.avatar');
   const popup = document.getElementById('popup-card');
@@ -40,14 +40,14 @@ firebase.auth().onAuthStateChanged(user => {
       }
     });
 
-    // 渲染弹出菜单（用 target="_self" 确保正常跳转）
+    // 渲染弹出菜单
     popup.innerHTML = `
       <p style="font-weight:bold;" title="${email}">
         <span data-fulltext="${email}">${email}</span>
       </p>
       <p title="${name}">用户名：<span data-fulltext="${name}">${name}</span></p>
       <hr>
-      <a href="profile.html" target="_self">个人主页</a><br>
+      <a href="profile.html">个人主页</a><br>
       <a href="#">通知</a><br>
       <a href="#" onclick="logoutUser()">退出</a>
     `;
