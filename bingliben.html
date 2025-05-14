@@ -181,7 +181,7 @@
 
     async function loadComments(id) {
       const list = document.getElementById(`comments-list-${id}`);
-      const snap = await db.collection("diary-comments").doc(id).collection("items").orderBy("time", "desc").get();
+      const snap = await db.collection("gameComments").doc(id).collection("items").orderBy("time", "desc").get();
       if (snap.empty) {
         list.innerHTML = "<p>暂无评论～</p>";
       } else {
