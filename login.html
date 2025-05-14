@@ -1,40 +1,97 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>登录</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: url('assets/bg.png') no-repeat center center fixed;
+      background-size: cover;
+    }
 
-  <!-- ✅ Firebase 浏览器兼容版本 -->
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      backdrop-filter: blur(4px);
+    }
+
+    .login-box {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #d24492;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .login-box button:hover {
+      background-color: #aa2d6f;
+    }
+
+    .back-link {
+      margin-top: 10px;
+      display: inline-block;
+      font-size: 14px;
+      color: #666;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: #d24492;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <h2>登录</h2>
+      <input type="email" id="email" placeholder="邮箱" />
+      <input type="password" id="password" placeholder="密码" />
+      <button onclick="login()">登录</button>
+      <a class="back-link" href="index.html">返回首页</a>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
   <script src="assets/firebase-init.js"></script>
-</head>
-<body>
-  <div class="register-box">
-    <h2>登录</h2>
-    <input type="email" id="login-email" placeholder="邮箱" />
-    <input type="password" id="login-password" placeholder="密码" />
-    <button onclick="loginUser()">登录</button>
-    <a href="index.html" class="back-link">← 返回首页</a>
-    <p id="login-error" style="color:red;"></p>
-  </div>
-
   <script>
-    function loginUser() {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          alert("登录成功！");
-          window.location.href = "index.html";
-        })
-        .catch((error) => {
-          document.getElementById("login-error").innerText = error.message;
-        });
+        .then(() => location.href = "index.html")
+        .catch(err => alert("登录失败：" + err.message));
     }
   </script>
 </body>
