@@ -128,7 +128,7 @@
           <div class="diary-date">${entry.date}</div>
           <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
           <button class="comment-toggle-btn" onclick="toggleExpand('${entry.id}')">展开全文</button>
-          <button class="comment-toggle-btn" onclick="toggleComments('${entry.id}')">点击查看与发表评论</button>
+          <button class="comment-toggle-btn" onclick="toggleComments('${entry.id}')" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
           <div class="comments-box" id="comments-${entry.id}">
             <div class="comments" id="comments-list-${entry.id}">加载评论中...</div>
             <div class="comment-form">
@@ -152,7 +152,7 @@
 
     function toggleComments(id) {
       const box = document.getElementById(`comments-${id}`);
-      const btn = box.previousElementSibling;
+      const btn = document.getElementById(`toggle-btn-${id}`);
       const showing = box.style.display === 'block';
       box.style.display = showing ? 'none' : 'block';
       btn.innerText = showing ? "点击查看与发表评论" : "点击收起";
