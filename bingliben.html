@@ -1,6 +1,115 @@
-<!-- ✅ bingliben.html 修复版（已修弹窗+评论） -->
-<!-- 太长，此处省略头部一致内容，只展示关键修复部分 -->
-...
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>绯÷病历本</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
+  <script src="assets/firebase-init.js"></script>
+  <style>
+    .diary-card {
+      border: 2px solid #f3c1e1;
+      border-radius: 16px;
+      background-color: #fff0f7;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+    .diary-title { font-weight: bold; font-size: 18px; color: #d24492; }
+    .diary-date { color: #888; font-size: 13px; }
+    .diary-content { margin: 10px 0; white-space: pre-wrap; }
+    .collapsed {
+      max-height: 4.5em;
+      overflow: hidden;
+      position: relative;
+    }
+    .collapsed::after {
+      content: "...";
+      position: absolute;
+      right: 0; bottom: 0;
+      background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
+      padding-left: 1em;
+    }
+    .comment-toggle-btn {
+      background-color: #fff;
+      border: 1px solid #d24492;
+      padding: 4px 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #d24492;
+      font-size: 14px;
+    }
+    .comment-toggle-btn:hover { background-color: #ffe6f0; }
+    .comments-box {
+      margin-top: 12px;
+      padding: 10px;
+      background: #fff;
+      border-radius: 10px;
+      display: none;
+    }
+    .comment {
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 4px;
+    }
+    .comment b { color: #555; }
+    .comment-form textarea {
+      width: 100%; height: 60px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 5px; margin-top: 8px;
+    }
+    .comment-form button {
+      margin-top: 4px;
+      background: #d24492;
+      color: white; border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .comment-form button:hover { background: #aa2d6f; }
+    .success-msg {
+      color: green;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>导航</h2>
+      <nav>
+        <a href="index.html">🏠 首页</a>
+        <a href="about.html">📖 关于</a>
+        <a href="gengbaike.html">📝 绯绯国梗百科</a>
+        <a href="bingliben.html">🩺 绯÷病历本</a>
+        <a href="paiwei.html">🎮 排位记录</a>
+        <a href="mud.html">🥰 泥巴怪可爱喵</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header>
+        <div class="avatar" onclick="togglePopup()">
+          <img src="assets/avatar.png" alt="用户头像" />
+          <div id="popup-card" class="popup hidden"></div>
+        </div>
+      </header>
+
+      <section>
+        <h1>🩺 绯÷病历本</h1>
+        <div id="diary-list"></div>
+      </section>
+    </main>
+  </div>
+
 <script src="assets/user-popup.js"></script>
 <script>
   const db = firebase.firestore();
