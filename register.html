@@ -1,41 +1,112 @@
-<!-- register.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>注册</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: url('assets/bg.png') no-repeat center center fixed;
+      background-size: cover;
+    }
 
-<!-- ✅ 替换你 register.html 的 <head> 中原来的 3 行为下面这 3 行 -->
-<script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
-<script src="assets/firebase-init.js"></script>
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      backdrop-filter: blur(4px);
+    }
 
+    .login-box {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 320px;
+    }
+
+    .login-box h2 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .security-tips {
+      font-size: 13px;
+      color: #aa2d6f;
+      background: #fff0f7;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #d24492;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .login-box button:hover {
+      background-color: #aa2d6f;
+    }
+
+    .back-link {
+      margin-top: 10px;
+      display: inline-block;
+      font-size: 14px;
+      color: #666;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: #d24492;
+    }
+  </style>
 </head>
 <body>
-  <div class="register-box">
-    <h2>注册</h2>
-    <input type="email" id="register-email" placeholder="邮箱" />
-    <input type="password" id="register-password" placeholder="密码" />
-    <button onclick="registerUser()">注册</button>
-    <a href="index.html" class="back-link">← 返回首页</a>
-    <p id="register-error" style="color:red;"></p>
+  <div class="login-container">
+    <div class="login-box">
+      <h2>注册</h2>
+      <div class="security-tips">
+        🔐 本网站的注册与登录基于 Firebase，<br>
+        为了您的个人信息安全，建议不要使用常用密码。<br><br>
+        ⚠️ 暂时不会拥有找回密码功能！请务必保管好您的密码！
+      </div>
+      <input type="email" id="email" placeholder="邮箱" />
+      <input type="password" id="password" placeholder="密码" />
+      <button onclick="register()">注册</button>
+      <a class="back-link" href="index.html">返回首页</a>
+    </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="assets/firebase-init.js"></script>
   <script>
-    function registerUser() {
-      const email = document.getElementById("register-email").value;
-      const password = document.getElementById("register-password").value;
-
+    function register() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          alert("注册成功，自动登录中...");
-          window.location.href = "index.html";
-        })
-        .catch((error) => {
-          document.getElementById("register-error").innerText = error.message;
-        });
+        .then(() => location.href = "index.html")
+        .catch(err => alert("注册失败：" + err.message));
     }
   </script>
 </body>
