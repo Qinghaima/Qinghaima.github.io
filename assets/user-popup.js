@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       popup.innerHTML = `
         <h3>欢迎使用！</h3>
-        <p>请登录或注册使用更多功能。</p>
+        <p><a href="login.html" style="color: #007acc;">登录</a> 或 <a href="register.html" style="color: #007acc;">注册</a></p>
       `;
     }
   });
