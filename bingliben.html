@@ -18,19 +18,9 @@
       margin-bottom: 20px;
       box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
     }
-    .diary-title {
-      font-weight: bold;
-      font-size: 18px;
-      color: #d24492;
-    }
-    .diary-date {
-      color: #888;
-      font-size: 13px;
-    }
-    .diary-content {
-      margin: 10px 0;
-      white-space: pre-wrap;
-    }
+    .diary-title { font-weight: bold; font-size: 18px; color: #d24492; }
+    .diary-date { color: #888; font-size: 13px; }
+    .diary-content { margin: 10px 0; white-space: pre-wrap; }
     .collapsed {
       max-height: 4.5em;
       overflow: hidden;
@@ -39,8 +29,7 @@
     .collapsed::after {
       content: "...";
       position: absolute;
-      right: 0;
-      bottom: 0;
+      right: 0; bottom: 0;
       background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
       padding-left: 1em;
     }
@@ -54,9 +43,7 @@
       color: #d24492;
       font-size: 14px;
     }
-    .comment-toggle-btn:hover {
-      background-color: #ffe6f0;
-    }
+    .comment-toggle-btn:hover { background-color: #ffe6f0; }
     .comments-box {
       margin-top: 12px;
       padding: 10px;
@@ -69,28 +56,27 @@
       border-bottom: 1px dashed #ccc;
       padding-bottom: 4px;
     }
-    .comment b {
-      color: #555;
-    }
+    .comment b { color: #555; }
     .comment-form textarea {
-      width: 100%;
-      height: 60px;
+      width: 100%; height: 60px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      padding: 5px;
-      margin-top: 8px;
+      padding: 5px; margin-top: 8px;
     }
     .comment-form button {
       margin-top: 4px;
       background: #d24492;
-      color: white;
-      border: none;
+      color: white; border: none;
       padding: 5px 12px;
       border-radius: 6px;
       cursor: pointer;
     }
-    .comment-form button:hover {
-      background: #aa2d6f;
+    .comment-form button:hover { background: #aa2d6f; }
+    .success-msg {
+      color: green;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
     }
   </style>
 </head>
@@ -118,7 +104,7 @@
       </header>
 
       <section>
-        <h1>🩺 绯÷病历本</h1>
+        <h1>🎮 游戏日记</h1>
         <div id="diary-list"></div>
       </section>
     </main>
@@ -129,7 +115,7 @@
     const db = firebase.firestore();
 
     async function loadDiaries() {
-      const res = await fetch('diary.json');
+      const res = await fetch('diary.json?t=' + Date.now());
       const diaries = await res.json();
       const container = document.getElementById('diary-list');
       container.innerHTML = '';
@@ -148,7 +134,7 @@
             <div class="comment-form">
               <textarea id="input-${entry.id}" placeholder="写点什么吧～"></textarea>
               <button onclick="submitComment('${entry.id}')">💬 发送评论</button>
-              <p id="feedback-${entry.id}" style="color:green; display:none;">评论已发送！</p>
+              <p class="success-msg" id="feedback-${entry.id}">评论已发送！</p>
             </div>
           </div>
         `;
@@ -176,7 +162,8 @@
       const user = firebase.auth().currentUser;
       if (!user) return alert("请先登录后评论～");
 
-      const text = document.getElementById(`input-${id}`).value.trim();
+      const textEl = document.getElementById(`input-${id}`);
+      const text = textEl.value.trim();
       if (!text) return;
 
       db.collection("diary-comments").doc(id).collection("items").add({
@@ -184,11 +171,10 @@
         text,
         time: new Date()
       }).then(() => {
-        document.getElementById(`input-${id}`).value = "";
-        document.getElementById(`feedback-${id}`).style.display = "block";
-        setTimeout(() => {
-          document.getElementById(`feedback-${id}`).style.display = "none";
-        }, 2000);
+        textEl.value = "";
+        const msg = document.getElementById(`feedback-${id}`);
+        msg.style.display = "block";
+        setTimeout(() => msg.style.display = "none", 2000);
         loadComments(id);
       });
     }
@@ -202,7 +188,7 @@
         list.innerHTML = snap.docs.map(doc => {
           const d = doc.data();
           const date = d.time.toDate().toLocaleString();
-          return `<div class="comment"><b>${d.user}</b> (${date})：<br>${d.text}</div>`;
+          return `<div class="comment"><b>${d.user}</b>（${date}）：<br>${d.text}</div>`;
         }).join('');
       }
     }
