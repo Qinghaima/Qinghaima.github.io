@@ -1,6 +1,4 @@
-<!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,9 +6,9 @@
   <link rel="stylesheet" href="assets/style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
   <script src="assets/firebase-init.js"></script>
 </head>
-
 <body>
   <div class="container">
     <aside class="sidebar">
@@ -41,7 +39,7 @@
     </main>
   </div>
 
-  <!-- ✅ 统一的用户弹窗逻辑 -->
+  <!-- ✅ 保证头像弹窗逻辑在 Firebase 加载完后执行 -->
   <script src="assets/user-popup.js"></script>
 </body>
 </html>
