@@ -35,7 +35,7 @@
     .avatar-preview img {
       width: 100%; height: 100%; object-fit: cover;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 8px;
       margin-bottom: 12px;
@@ -59,14 +59,25 @@
       margin-bottom: 6px;
     }
     .msg-success {
-      color: green;
       font-size: 14px;
-      display: none;
+      margin-top: 8px;
+    }
+    .msg-success.green { color: green; }
+    .msg-success.gray { color: #888; }
+    .msg-success.red { color: crimson; }
+    .back-button {
+      display: block;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+      text-decoration: none;
+      color: #d24492;
     }
   </style>
 </head>
 <body>
   <div class="profile-box">
+    <a href="index.html" class="back-button">← 返回首页</a>
     <h2>个人主页设置</h2>
     <p id="user-email" style="font-size: 14px; color: #666; margin-bottom: 10px;"></p>
 
@@ -76,16 +87,12 @@
     <input type="file" id="avatar-upload" accept="image/*" />
     <div class="notice">头像必须为正方形，文件大小不得超过 1MB</div>
     <button onclick="uploadAvatar()">设为头像</button>
-    <p class="msg-success" id="avatar-success">头像设置成功！</p>
+    <p class="msg-success" id="avatar-msg"></p>
 
     <h3>用户名</h3>
-    <input type="text" id="username" placeholder="起个名字吧～" />
-
-    <h3>个性签名</h3>
-    <textarea id="signature" rows="3" placeholder="写一点简介..."></textarea>
-
+    <input type="text" id="username" placeholder="起个名字吧～" maxlength="16" />
     <button onclick="saveProfile()">保存设置</button>
-    <p class="msg-success" id="profile-success">资料保存成功！</p>
+    <p class="msg-success" id="name-msg"></p>
   </div>
 
   <script>
@@ -93,6 +100,9 @@
     const storage = firebase.storage();
     const db = firebase.firestore();
     let selectedFile = null;
+    let userCreateTime = null;
+    let lastAvatarChange = null;
+    let lastNameChange = null;
 
     document.getElementById("avatar-upload").addEventListener("change", (e) => {
       const file = e.target.files[0];
@@ -115,59 +125,83 @@
       img.src = URL.createObjectURL(file);
     });
 
-    function uploadAvatar() {
+    async function uploadAvatar() {
       const user = auth.currentUser;
       if (!user || !selectedFile) {
         alert("请先登录并选择一张图片！");
         return;
       }
 
+      const now = new Date();
+      const createTime = new Date(user.metadata.creationTime);
+      const diffSinceReg = (now - createTime) / (1000 * 3600 * 24);
+      if (diffSinceReg < 2) {
+        return showMsg("avatar-msg", "注册两天内不可更换头像", "red");
+      }
+      if (lastAvatarChange && (now - lastAvatarChange.toDate()) < 3 * 24 * 3600 * 1000) {
+        return showMsg("avatar-msg", "头像更改需间隔3天", "red");
+      }
+
       const ref = storage.ref(`avatars/${user.uid}.jpg`);
-      ref.put(selectedFile).then(() => {
-        ref.getDownloadURL().then(url => {
-          user.updateProfile({ photoURL: url });
-          db.collection("profiles").doc(user.uid).set({ avatar: url }, { merge: true });
-          document.getElementById("avatar-success").style.display = "block";
-          setTimeout(() => location.reload(), 1500);
-        });
-      });
+      await ref.put(selectedFile);
+      const url = await ref.getDownloadURL();
+
+      await user.updateProfile({ photoURL: url });
+      await db.collection("profiles").doc(user.uid).set({
+        avatar: url,
+        avatarUpdateTime: now
+      }, { merge: true });
+
+      showMsg("avatar-msg", "头像设置成功！", "green");
+      setTimeout(() => location.reload(), 1500);
     }
 
-    function saveProfile() {
+    async function saveProfile() {
       const user = auth.currentUser;
       if (!user) return alert("请先登录");
 
       const name = document.getElementById("username").value.trim();
-      const sig = document.getElementById("signature").value.trim();
+      if (!name) return showMsg("name-msg", "用户名不能为空", "red");
+      if (name.length > 16) return showMsg("name-msg", "用户名不能超过16个字符", "red");
 
-      user.updateProfile({ displayName: name });
-      db.collection("profiles").doc(user.uid).set({
-        displayName: name,
-        signature: sig
-      }, { merge: true }).then(() => {
-        document.getElementById("profile-success").style.display = "block";
-        setTimeout(() => {
-          document.getElementById("profile-success").style.display = "none";
-        }, 2000);
-      });
-    }
-
-    auth.onAuthStateChanged(user => {
-      if (!user) return location.href = "login.html";
-
-      // ✅ 显示邮箱
-      document.getElementById("user-email").innerText = "登录邮箱：" + user.email;
-
-      document.getElementById("username").value = user.displayName || "";
-      if (user.photoURL) {
-        document.getElementById("avatar-img").src = user.photoURL;
+      const now = new Date();
+      if (lastNameChange && (now - lastNameChange.toDate()) < 3 * 24 * 3600 * 1000) {
+        return showMsg("name-msg", "用户名更改需间隔3天", "red");
       }
 
-      db.collection("profiles").doc(user.uid).get().then(doc => {
-        if (doc.exists) {
-          document.getElementById("signature").value = doc.data().signature || "";
-        }
-      });
+      if (name === user.displayName) {
+        return showMsg("name-msg", "没有任何修改", "gray");
+      }
+
+      await user.updateProfile({ displayName: name });
+      await db.collection("profiles").doc(user.uid).set({
+        displayName: name,
+        nameUpdateTime: now
+      }, { merge: true });
+
+      showMsg("name-msg", "用户名修改成功", "green");
+    }
+
+    function showMsg(id, text, type) {
+      const el = document.getElementById(id);
+      el.innerText = text;
+      el.className = `msg-success ${type}`;
+      el.style.display = "block";
+      setTimeout(() => el.style.display = "none", 2500);
+    }
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) return location.href = "login.html";
+      document.getElementById("user-email").innerText = "登录邮箱：" + user.email;
+      document.getElementById("username").value = user.displayName || "";
+      if (user.photoURL) document.getElementById("avatar-img").src = user.photoURL;
+
+      const doc = await db.collection("profiles").doc(user.uid).get();
+      if (doc.exists) {
+        const data = doc.data();
+        lastAvatarChange = data.avatarUpdateTime || null;
+        lastNameChange = data.nameUpdateTime || null;
+      }
     });
   </script>
 </body>
