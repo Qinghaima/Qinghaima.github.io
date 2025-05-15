@@ -166,3 +166,19 @@ header {
   background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
   padding-left: 1em;
 }
+.comment-toggle-btn {
+  background-color: #fff;
+  border: 1px solid #d24492;
+  color: #d24492;
+  padding: 4px 10px;
+  margin-top: 8px;
+  margin-right: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.comment-toggle-btn:hover {
+  background-color: #ffe6f0;
+}
