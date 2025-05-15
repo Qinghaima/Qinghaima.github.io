@@ -9,76 +9,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
   <script src="assets/firebase-init.js"></script>
-  <style>
-    .diary-card {
-      border: 2px solid #f3c1e1;
-      border-radius: 16px;
-      background-color: #fff0f7;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-    }
-    .diary-title { font-weight: bold; font-size: 18px; color: #d24492; }
-    .diary-date { color: #888; font-size: 13px; }
-    .diary-content { margin: 10px 0; white-space: pre-wrap; }
-    .collapsed {
-      max-height: 4.5em;
-      overflow: hidden;
-      position: relative;
-    }
-    .collapsed::after {
-      content: "...";
-      position: absolute;
-      right: 0; bottom: 0;
-      background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
-      padding-left: 1em;
-    }
-    .comment-toggle-btn {
-      background-color: #fff;
-      border: 1px solid #d24492;
-      padding: 4px 10px;
-      margin-top: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: #d24492;
-      font-size: 14px;
-    }
-    .comment-toggle-btn:hover { background-color: #ffe6f0; }
-    .comments-box {
-      margin-top: 12px;
-      padding: 10px;
-      background: #fff;
-      border-radius: 10px;
-      display: none;
-    }
-    .comment {
-      margin-bottom: 10px;
-      border-bottom: 1px dashed #ccc;
-      padding-bottom: 4px;
-    }
-    .comment b { color: #555; }
-    .comment-form textarea {
-      width: 100%; height: 60px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      padding: 5px; margin-top: 8px;
-    }
-    .comment-form button {
-      margin-top: 4px;
-      background: #d24492;
-      color: white; border: none;
-      padding: 5px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .comment-form button:hover { background: #aa2d6f; }
-    .success-msg {
-      color: green;
-      font-size: 13px;
-      margin-top: 5px;
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
@@ -106,96 +36,65 @@
       <section>
         <h1>🩺 绯÷病历本</h1>
         <p style="margin-top:-10px;color:#555;">下列内容含大量主播癔症or幻想，请谨慎观看，谨防绯÷癔症沿网络模因污染😊</p>
-        <p style="color:#888;">病历本内容皆主播个人言论，与白字 彩字 黑子 白字 孝子 儿子 女儿 孙子 孙女 主播的狗 纯🦌人 路边也够 均无关，请勿上升他人</p>
+        <p style="color:#888;">病历本内容皆主播个人言论，与白字 彩字 黑子 白子 孝子 儿子 女儿 孙子 孙女 主播的狗 纯🦌人 路边也够 均无关，请勿上升他人</p>
         <div id="diary-list"></div>
       </section>
     </main>
   </div>
 
-<script src="assets/user-popup.js"></script>
-<script>
-  const db = firebase.firestore();
+  <!-- 公共逻辑脚本 -->
+  <script src="assets/user-popup.js"></script>
+  <script src="assets/comments.js"></script>
 
-  async function loadDiaries() {
-    const res = await fetch('diary.json?t=' + Date.now());
-    const diaries = await res.json();
-    const container = document.getElementById('diary-list');
-    container.innerHTML = '';
+  <script>
+    async function loadDiaries() {
+      const res = await fetch('diary.json?t=' + Date.now());
+      const diaries = await res.json();
+      const container = document.getElementById('diary-list');
+      container.innerHTML = '';
 
-    for (const entry of diaries) {
-      const card = document.createElement('div');
-      card.className = 'diary-card';
-      card.innerHTML = `
-        <div class="diary-title">${entry.title}</div>
-        <div class="diary-date">${entry.date}</div>
-        <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
-        <button class="comment-toggle-btn" onclick="toggleExpand('${entry.id}')">展开全文</button>
-        <button class="comment-toggle-btn" onclick="toggleComments('${entry.id}')" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
-        <div class="comments-box" id="comments-${entry.id}">
-          <div class="comments" id="comments-list-${entry.id}">加载评论中...</div>
-          <div class="comment-form">
-            <textarea id="input-${entry.id}" placeholder="写点什么吧～"></textarea>
-            <button onclick="submitComment('${entry.id}')">💬 发送评论</button>
-            <p class="success-msg" id="feedback-${entry.id}">评论已发送！</p>
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-      loadComments(entry.id);
+      for (const entry of diaries) {
+        const card = document.createElement('div');
+        card.className = 'diary-card';
+        const commentBoxId = `comments-${entry.id}`;
+        card.innerHTML = `
+          <div class="diary-title">${entry.title}</div>
+          <div class="diary-date">${entry.date}</div>
+          <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
+          <button class="comment-toggle-btn" onclick="toggleExpand('${entry.id}')">展开全文</button>
+          <button class="comment-toggle-btn" onclick="toggleComments('${entry.id}')" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
+          <div class="comments-box" id="${commentBoxId}" style="display:none;"></div>
+        `;
+        container.appendChild(card);
+
+        // 延迟初始化评论系统，避免默认加载所有评论影响性能
+        // 初始化时再调用
+      }
     }
-  }
 
-  function toggleExpand(id) {
-    const content = document.getElementById(`content-${id}`);
-    const btns = content.parentElement.querySelectorAll('.comment-toggle-btn');
-    content.classList.toggle('collapsed');
-    btns[0].innerText = content.classList.contains('collapsed') ? "展开全文" : "收起全文";
-  }
-
-  function toggleComments(id) {
-    const box = document.getElementById(`comments-${id}`);
-    const btn = document.getElementById(`toggle-btn-${id}`);
-    const showing = box.style.display === 'block';
-    box.style.display = showing ? 'none' : 'block';
-    btn.innerText = showing ? "点击查看与发表评论" : "点击收起";
-  }
-
-  function submitComment(id) {
-    const user = firebase.auth().currentUser;
-    if (!user) return alert("请先登录后评论～");
-
-    const textEl = document.getElementById(`input-${id}`);
-    const text = textEl.value.trim();
-    if (!text) return;
-
-    db.collection("gameComments").doc(id).collection("items").add({
-      user: user.displayName || user.email,
-      text,
-      time: new Date()
-    }).then(() => {
-      textEl.value = "";
-      const msg = document.getElementById(`feedback-${id}`);
-      msg.style.display = "block";
-      setTimeout(() => msg.style.display = "none", 2000);
-      loadComments(id);
-    });
-  }
-
-  async function loadComments(id) {
-    const list = document.getElementById(`comments-list-${id}`);
-    const snap = await db.collection("gameComments").doc(id).collection("items").orderBy("time", "desc").get();
-    if (snap.empty) {
-      list.innerHTML = "<p>暂无评论～</p>";
-    } else {
-      list.innerHTML = snap.docs.map(doc => {
-        const d = doc.data();
-        const date = d.time.toDate().toLocaleString();
-        return `<div class="comment"><b>${d.user}</b>（${date}）：<br>${d.text}</div>`;
-      }).join('');
+    function toggleExpand(id) {
+      const content = document.getElementById(`content-${id}`);
+      const btns = content.parentElement.querySelectorAll('.comment-toggle-btn');
+      content.classList.toggle('collapsed');
+      btns[0].innerText = content.classList.contains('collapsed') ? "展开全文" : "收起全文";
     }
-  }
 
-  loadDiaries();
-</script>
+    function toggleComments(id) {
+      const box = document.getElementById(`comments-${id}`);
+      const btn = document.getElementById(`toggle-btn-${id}`);
+      const showing = box.style.display === 'block';
+      if (!showing && !box.dataset.loaded) {
+        initCommentSystem({
+          postId: id,
+          containerId: `comments-${id}`
+        });
+        box.dataset.loaded = "true";
+      }
+      box.style.display = showing ? 'none' : 'block';
+      btn.innerText = showing ? "点击查看与发表评论" : "点击收起";
+    }
+
+    loadDiaries();
+  </script>
 </body>
 </html>
