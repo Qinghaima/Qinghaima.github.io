@@ -61,40 +61,22 @@
           <div class="diary-title">${entry.title}</div>
           <div class="diary-date">${entry.date}</div>
           <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
-          <button class="comment-toggle-btn" onclick="toggleExpand('${entry.id}')">展开全文</button>
-          <button class="comment-toggle-btn" onclick="toggleComments('${entry.id}')" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
+          <button class="comment-toggle-btn" id="expand-btn-${entry.id}" onclick="toggleExpand('${entry.id}')">展开全文</button>
+          <button class="comment-toggle-btn" id="toggle-btn-${entry.id}" onclick="toggleComments('${entry.id}')">点击查看与发表评论</button>
           <div class="comments-box" id="${commentBoxId}" style="display:none;"></div>
         `;
         container.appendChild(card);
-
-        // 延迟初始化评论系统，避免默认加载所有评论影响性能
-        // 初始化时再调用
       }
-    }
-
-    function toggleExpand(id) {
-      const content = document.getElementById(`content-${id}`);
-      const btns = content.parentElement.querySelectorAll('.comment-toggle-btn');
-      content.classList.toggle('collapsed');
-      btns[0].innerText = content.classList.contains('collapsed') ? "展开全文" : "收起全文";
-    }
-
-    function toggleComments(id) {
-      const box = document.getElementById(`comments-${id}`);
-      const btn = document.getElementById(`toggle-btn-${id}`);
-      const showing = box.style.display === 'block';
-      if (!showing && !box.dataset.loaded) {
-        initCommentSystem({
-          postId: id,
-          containerId: `comments-${id}`
-        });
-        box.dataset.loaded = "true";
-      }
-      box.style.display = showing ? 'none' : 'block';
-      btn.innerText = showing ? "点击查看与发表评论" : "点击收起";
     }
 
     loadDiaries();
+  </script>
+
+  <!-- 模块功能统一加载 -->
+  <script type="module">
+    import { toggleExpand, toggleComments } from './assets/diary-utils.js';
+    window.toggleExpand = toggleExpand;
+    window.toggleComments = toggleComments;
   </script>
 </body>
 </html>
