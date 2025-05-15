@@ -46,7 +46,9 @@
   <script src="assets/user-popup.js"></script>
   <script src="assets/comments.js"></script>
 
-  <script>
+  <script type="module">
+    import { toggleExpand, toggleComments, setupToggleListeners } from './assets/diary-utils.js';
+
     async function loadDiaries() {
       const res = await fetch('diary.json?t=' + Date.now());
       const diaries = await res.json();
@@ -61,22 +63,18 @@
           <div class="diary-title">${entry.title}</div>
           <div class="diary-date">${entry.date}</div>
           <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
-          <button class="comment-toggle-btn" id="expand-btn-${entry.id}" onclick="toggleExpand('${entry.id}')">展开全文</button>
-          <button class="comment-toggle-btn" id="toggle-btn-${entry.id}" onclick="toggleComments('${entry.id}')">点击查看与发表评论</button>
+          <button class="comment-toggle-btn" data-toggle-expand data-id="${entry.id}" id="expand-btn-${entry.id}">展开全文</button>
+          <button class="comment-toggle-btn" data-toggle-comments data-id="${entry.id}" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
           <div class="comments-box" id="${commentBoxId}" style="display:none;"></div>
         `;
         container.appendChild(card);
       }
+
+      // ✅ 绑定展开全文/收起 和 查看评论 按钮事件
+      setupToggleListeners();
     }
 
     loadDiaries();
-  </script>
-
-  <!-- 模块功能统一加载 -->
-  <script type="module">
-    import { toggleExpand, toggleComments } from './assets/diary-utils.js';
-    window.toggleExpand = toggleExpand;
-    window.toggleComments = toggleComments;
   </script>
 </body>
 </html>
