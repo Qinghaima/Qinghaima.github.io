@@ -152,20 +152,7 @@ header {
   margin-bottom: 20px;
   box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
 }
-.collapsed {
-  max-height: 4.5em;
-  overflow: hidden;
-  position: relative;
-}
 
-.collapsed::after {
-  content: "...";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
-  padding-left: 1em;
-}
 .comment-toggle-btn {
   background-color: #fff;
   border: 1px solid #d24492;
@@ -181,4 +168,19 @@ header {
 
 .comment-toggle-btn:hover {
   background-color: #ffe6f0;
+
+.collapsed {
+  max-height: 4.5em;
+  overflow: hidden;
+  position: relative;
+}
+
+.collapsed::after {
+  content: "...";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
+  padding-left: 1em;
+}
 }
