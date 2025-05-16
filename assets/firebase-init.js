@@ -14,3 +14,5 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+// 显式初始化 Firestore（有些版本不加这一句会访问失败）
+firebase.firestore();
