@@ -42,48 +42,39 @@
     </main>
   </div>
 
-  <!-- 通用功能模块 -->
   <script src="assets/user-popup.js"></script>
-  <script src="assets/comments.js"></script>
 
-<!-- 模块方式引入评论逻辑 -->
-<script type="module">
-  import { toggleExpand, toggleComments, setupToggleListeners } from './assets/diary-utils.js';
+  <script type="module">
+    import { toggleExpand, toggleComments, setupToggleListeners } from './assets/diary-utils.js';
+    import * as comments from './assets/comments.js';
 
-  async function loadDiaries() {
-    const res = await fetch('diary.json?t=' + Date.now());
-    const diaries = await res.json();
-    const container = document.getElementById('diary-list');
-    container.innerHTML = '';
+    // 注入评论系统给 toggleComments 调用
+    window.initCommentSystem = comments.initCommentSystem;
 
-    for (const entry of diaries) {
-      const card = document.createElement('div');
-      card.className = 'diary-card';
-      const commentBoxId = `comments-${entry.id}`;
+    async function loadDiaries() {
+      const res = await fetch('diary.json?t=' + Date.now());
+      const diaries = await res.json();
+      const container = document.getElementById('diary-list');
+      container.innerHTML = '';
 
-      card.innerHTML = `
-        <div class="diary-title">${entry.title}</div>
-        <div class="diary-date">${entry.date}</div>
-        <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
-        <button class="comment-toggle-btn" id="expand-btn-${entry.id}" data-toggle-expand data-id="${entry.id}">展开全文</button>
-        <button class="comment-toggle-btn" id="toggle-btn-${entry.id}" data-toggle-comments data-id="${entry.id}">点击查看与发表评论</button>
-        <div class="comments-box" id="${commentBoxId}" style="display: none;"></div>
-      `;
+      for (const entry of diaries) {
+        const card = document.createElement('div');
+        card.className = 'diary-card';
+        card.innerHTML = `
+          <div class="diary-title">${entry.title}</div>
+          <div class="diary-date">${entry.date}</div>
+          <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
+          <button class="comment-toggle-btn" id="expand-btn-${entry.id}" data-toggle-expand data-id="${entry.id}">展开全文</button>
+          <button class="comment-toggle-btn" id="toggle-btn-${entry.id}" data-toggle-comments data-id="${entry.id}">点击查看与发表评论</button>
+          <div class="comments-box" id="comments-${entry.id}" style="display:none;"></div>
+        `;
+        container.appendChild(card);
+      }
 
-      container.appendChild(card);
+      setupToggleListeners();
     }
 
-    // 绑定展开/收起逻辑
-    setupToggleListeners();
-  }
-
-  loadDiaries();
-
-  // ⛳ 将全局函数注入，供 HTML 调用
-  import * as comments from './assets/comments.js';
-  window.initCommentSystem = comments.initCommentSystem;
-</script>
-
-
+    loadDiaries();
+  </script>
 </body>
 </html>
