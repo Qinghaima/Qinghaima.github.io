@@ -46,42 +46,41 @@
   <script src="assets/user-popup.js"></script>
   <script src="assets/comments.js"></script>
 
-<script type="module">
-  import { toggleExpand, toggleComments } from './assets/diary-utils.js';
+  <script type="module">
+    import { toggleExpand, toggleComments } from './assets/diary-utils.js';
 
-  async function loadDiaries() {
-    const res = await fetch('diary.json?t=' + Date.now());
-    const diaries = await res.json();
-    const container = document.getElementById('diary-list');
-    container.innerHTML = '';
+    async function loadDiaries() {
+      const res = await fetch('diary.json?t=' + Date.now());
+      const diaries = await res.json();
+      const container = document.getElementById('diary-list');
+      container.innerHTML = '';
 
-    for (const entry of diaries) {
-      const card = document.createElement('div');
-      card.className = 'diary-card';
-      const commentBoxId = `comments-${entry.id}`;
+      for (const entry of diaries) {
+        const commentBoxId = `comments-${entry.id}`;
+        const card = document.createElement('div');
+        card.className = 'diary-card';
 
-      card.innerHTML = `
-        <div class="diary-title">${entry.title}</div>
-        <div class="diary-date">${entry.date}</div>
-        <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
-        <button class="comment-toggle-btn" id="expand-btn-${entry.id}">展开全文</button>
-        <button class="comment-toggle-btn" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
-        <div class="comments-box" id="${commentBoxId}" style="display:none;"></div>
-      `;
+        card.innerHTML = `
+          <div class="diary-title">${entry.title}</div>
+          <div class="diary-date">${entry.date}</div>
+          <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
+          <button class="comment-toggle-btn" id="expand-btn-${entry.id}">展开全文</button>
+          <button class="comment-toggle-btn" id="toggle-btn-${entry.id}">点击查看与发表评论</button>
+          <div class="comments-box" id="${commentBoxId}" style="display:none;"></div>
+        `;
 
-      container.appendChild(card);
+        container.appendChild(card);
 
-      // ✅ 模块方式绑定函数（不要写 window.toggleExpand）
-      const expandBtn = card.querySelector(`#expand-btn-${entry.id}`);
-      const commentBtn = card.querySelector(`#toggle-btn-${entry.id}`);
+        // ✅ 按钮绑定（绑定时必须等 DOM 插入完毕）
+        const expandBtn = card.querySelector(`#expand-btn-${entry.id}`);
+        const commentBtn = card.querySelector(`#toggle-btn-${entry.id}`);
 
-      expandBtn?.addEventListener('click', () => toggleExpand(entry.id));
-      commentBtn?.addEventListener('click', () => toggleComments(entry.id));
+        expandBtn?.addEventListener('click', () => toggleExpand(entry.id));
+        commentBtn?.addEventListener('click', () => toggleComments(entry.id));
+      }
     }
-  }
 
-  loadDiaries();
-</script>
-
+    loadDiaries();
+  </script>
 </body>
 </html>
