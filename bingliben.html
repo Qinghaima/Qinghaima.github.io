@@ -46,7 +46,8 @@
   <script src="assets/user-popup.js"></script>
   <script src="assets/comments.js"></script>
 
-  <script type="module">
+<!-- 模块方式引入评论逻辑 -->
+<script type="module">
   import { toggleExpand, toggleComments, setupToggleListeners } from './assets/diary-utils.js';
 
   async function loadDiaries() {
@@ -66,17 +67,23 @@
         <div class="diary-content collapsed" id="content-${entry.id}">${entry.content}</div>
         <button class="comment-toggle-btn" id="expand-btn-${entry.id}" data-toggle-expand data-id="${entry.id}">展开全文</button>
         <button class="comment-toggle-btn" id="toggle-btn-${entry.id}" data-toggle-comments data-id="${entry.id}">点击查看与发表评论</button>
-        <div class="comments-box" id="${commentBoxId}" style="display:none;"></div>
+        <div class="comments-box" id="${commentBoxId}" style="display: none;"></div>
       `;
+
       container.appendChild(card);
     }
 
-    // ✅ 关键补充：调用监听绑定函数
+    // 绑定展开/收起逻辑
     setupToggleListeners();
   }
 
   loadDiaries();
+
+  // ⛳ 将全局函数注入，供 HTML 调用
+  import * as comments from './assets/comments.js';
+  window.initCommentSystem = comments.initCommentSystem;
 </script>
+
 
 </body>
 </html>
