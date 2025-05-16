@@ -189,3 +189,71 @@ header {
   background: linear-gradient(to right, rgba(255,240,247,0), #fff0f7 80%);
   padding-left: 1em;
 }
+
+.comments-box {
+  margin-top: 12px;
+  padding: 16px;
+  background: #fff5fb;
+  border: 2px solid #f3c1e1;
+  border-radius: 14px;
+  box-shadow: 1px 1px 6px rgba(0,0,0,0.08);
+  font-size: 14px;
+}
+
+.comment {
+  margin-bottom: 12px;
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 8px;
+}
+
+.comment b {
+  color: #d24492;
+}
+
+.comment-form {
+  margin-top: 10px;
+}
+
+.comment-form textarea {
+  width: 100%;
+  height: 70px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-family: sans-serif;
+  resize: vertical;
+}
+
+.comment-form button {
+  margin-top: 6px;
+  background-color: #d24492;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.comment-form button:hover {
+  background-color: #b63176;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sort-buttons button {
+  background-color: #fff;
+  border: 1px solid #d24492;
+  color: #d24492;
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.sort-buttons button:hover {
+  background-color: #ffeaf3;
+}
